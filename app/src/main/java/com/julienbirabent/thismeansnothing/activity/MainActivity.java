@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import com.julienbirabent.thismeansnothing.R;
+import com.julienbirabent.thismeansnothing.adapter.AudioTrackAdapter;
 import com.julienbirabent.thismeansnothing.model.AudioTrack;
 
 import java.util.ArrayList;
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
         getAudioTracksFromExternalContent();
         sortTracks();
+        // En gros l'adapteur custom qu on a créé contient la liste des tracks que l on veut
+        // afficher. C est cet objet qui va se charger d aller mettre les informations des tracks
+        // dans la liste qui s affiche à l'écran.
+        AudioTrackAdapter audioTrackAdapter = new AudioTrackAdapter(this, audioTracks);
+        audioTracksView.setAdapter(audioTrackAdapter);
 
     }
 
