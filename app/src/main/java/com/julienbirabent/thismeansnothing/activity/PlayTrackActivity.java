@@ -11,11 +11,16 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.julienbirabent.thismeansnothing.R;
 import com.julienbirabent.thismeansnothing.controller.TrackController;
 import com.julienbirabent.thismeansnothing.model.AudioTrack;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import android.os.Handler;
 
 
 /**
@@ -39,8 +44,21 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     private int chosenTrackId;
     private View mMediaControllerView;
     private TextView trackTimePositionView;
-
+    private SeekBar seekBar;
     private boolean isMediaPlayerPrepared = false;
+    private Handler durationHandler = new Handler();
+
+    //handler to change seekBarTime
+    private Runnable updateSeekBarTime = new Runnable() {
+        public void run() {
+            //set seekbar progress
+            if(isPlaying()) {
+                seekBar.setProgress(getCurrentPosition());
+                //repeat yourself that again in 100 miliseconds
+            }
+            durationHandler.postDelayed(this, 50);
+        }
+    };
 
 
     @Override
@@ -51,7 +69,44 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
         trackInfoView = (TextView) findViewById(R.id.playing_track_informations);
         mMediaControllerView = (View)findViewById(R.id.media_controller);
         trackTimePositionView = (TextView) findViewById(R.id.track_time_position);
+        seekBar = (SeekBar) findViewById(R.id.seek_bar);
 
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(isMediaPlayerPrepared && player!= null){
+                    // On dit au media player d'aller jouer à partir de la position de la seekbar
+                    if(fromUser){
+                        seekTo(progress);
+                    }
+                    displayTimeTrackPosition(progress);
+
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+    }
+
+    /**
+     * Méthode qui affiche le temps de progrès d une track dans un textview.
+     * Elle prend le temps en ms et le convertit au format mm:ss:SSS
+     * @param position : le temps en ms
+     */
+    private void displayTimeTrackPosition(int position){
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
+        String timeFormatted = sdf.format(new Date(position));
+        trackTimePositionView.setText(timeFormatted);
     }
 
     @Override
@@ -81,6 +136,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
         if (extras != null) {
             chosenTrackId = extras.getInt("chosenTrackId");
             actualiserCeQuiJoue();
+            updateSeekBarTime.run();
         }
 
     }
@@ -169,6 +225,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     public void start() {
         if(!isPlaying() && player != null) {
             player.start();
+            updateSeekBarTime.run();
         }
     }
 
@@ -176,6 +233,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     public void pause() {
         if(player.isPlaying() && player != null) {
             player.pause();
+
         }
     }
 
@@ -193,7 +251,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     public int getCurrentPosition() {
 
         if(isMediaPlayerPrepared && player != null){
-            player.getCurrentPosition();
+           return  player.getCurrentPosition();
         }
 
         return 0;
@@ -228,12 +286,12 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
 
     @Override
     public boolean canSeekBackward() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean canSeekForward() {
-        return true;
+        return false;
     }
 
     @Override
@@ -245,6 +303,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     public void onCompletion(MediaPlayer mp) {
        if(mp!= null) {
            mp.reset();
+           playNext();
        }
     }
 
@@ -265,6 +324,8 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
         setController();
         mp.start();
         isMediaPlayerPrepared = true;
+        seekBar.setProgress(0);
+        seekBar.setMax(getDuration());
         controller.show(0);
     }
 
