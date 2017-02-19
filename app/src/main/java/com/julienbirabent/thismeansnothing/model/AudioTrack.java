@@ -1,5 +1,7 @@
 package com.julienbirabent.thismeansnothing.model;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Julien on 2017-02-18.
  * Clqsse permettqnt de stocker des informations de base concernant une piste audio
@@ -10,7 +12,8 @@ public class AudioTrack {
     private long id;
     private String title;
     private String author;
-    private double duration;
+    private long duration;
+    private String readableDuration;
 
 
     /**
@@ -27,11 +30,31 @@ public class AudioTrack {
      * @param author
      * @param duration
      */
-    public AudioTrack(long id, String title, String author, double duration) {
+    public AudioTrack(long id, String title, String author, long duration) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.duration = duration;
+    }
+
+    /**
+     * fonction permettant d'avoir accès à la durée d une piste écrite dans le format hh:mm:ss
+     * @return
+     */
+    public String getReadableDuration(){
+
+        if(readableDuration == null){
+            readableDuration = String.format("%d:%d",
+                    TimeUnit.MILLISECONDS.toMinutes(getDuration()),
+                    TimeUnit.MILLISECONDS.toSeconds(getDuration()) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(getDuration()))
+            );
+        }
+            return readableDuration;
+    }
+
+    public void setReadableDuration(String hhmmss){
+        readableDuration = hhmmss;
     }
 
     public long getId() {
@@ -58,11 +81,11 @@ public class AudioTrack {
         this.author = author;
     }
 
-    public double getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(double duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 }

@@ -61,7 +61,7 @@ public class AudioTrackAdapter extends BaseAdapter {
         //get title and artist strings
         tittleView.setText(currentTrack.getTitle());
         authorView.setText(currentTrack.getAuthor());
-        durationView.setText(String.valueOf(currentTrack.getDuration()));
+        durationView.setText(currentTrack.getReadableDuration());
         //set position as tag
         trackLayout.setTag(position);
         return trackLayout;

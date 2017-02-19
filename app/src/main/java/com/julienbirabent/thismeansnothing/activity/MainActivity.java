@@ -1,9 +1,15 @@
 package com.julienbirabent.thismeansnothing.activity;
 
+import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -22,14 +28,25 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<AudioTrack> audioTracks;
     private ListView audioTracksView;
 
+    private final static int EXTERNAL_STORAGE_CODE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Il nous faut les permissions avant sinon ca crash
+        requestPermissions();
+
         initializeViews();
         // toujours instancier un objet avant de pouvoir l'utiliser
         audioTracks = new ArrayList<AudioTrack>();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         getAudioTracksFromExternalContent();
         sortTracks();
@@ -39,6 +56,65 @@ public class MainActivity extends AppCompatActivity {
         AudioTrackAdapter audioTrackAdapter = new AudioTrackAdapter(this, audioTracks);
         audioTracksView.setAdapter(audioTrackAdapter);
 
+
+    }
+
+    /**
+     * Dans cette méthode, on affiche un message à l utilisateur lui demandant si oui ou non
+     * il nous accorde les permissions demandées. onRequestPermissionsResult est appelée quand cette
+     * méthode ce termine.
+     */
+    private void requestPermissions(){
+
+        // Demander la permission de lire le storage externe si elle n est pas déja attribuée
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        EXTERNAL_STORAGE_CODE);
+
+        }
+
+    }
+
+    /**
+     * Cette méthode est appelée quand un évnement concernant l attribution de permission
+     * pendant l execution de l'application est détecté.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case EXTERNAL_STORAGE_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // all greavy baby on peut initialiser nos SHIT
+                    getAudioTracksFromExternalContent();
+                    sortTracks();
+                    // En gros l'adapteur custom qu on a créé contient la liste des tracks que l on veut
+                    // afficher. C est cet objet qui va se charger d aller mettre les informations des tracks
+                    // dans la liste qui s affiche à l'écran.
+                    AudioTrackAdapter audioTrackAdapter = new AudioTrackAdapter(this, audioTracks);
+                    audioTracksView.setAdapter(audioTrackAdapter);
+
+                } else {
+
+                    // Permission DENIED = t'es NIKEEEEEEE retour à la case départ
+                    Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                    homeIntent.addCategory(Intent.CATEGORY_HOME);
+                    homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(homeIntent);
+                }
+                return;
+            }
+
+
+        }
     }
 
     /**
@@ -95,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
-                double thisDuration = musicCursor.getDouble(durationColumn);
+                long thisDuration = musicCursor.getLong(durationColumn);
                 audioTracks.add(new AudioTrack(thisId,thisTitle,thisArtist,thisDuration));
             }
             // Tant qu'il reste du contenu dans la table, on bouge le curseur à la position suivante
