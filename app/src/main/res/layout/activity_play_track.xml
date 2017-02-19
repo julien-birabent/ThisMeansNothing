@@ -34,10 +34,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/track_time_position"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="70dp"
         android:nestedScrollingEnabled="false">
 
     </MediaController>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seek_bar"
+        android:minHeight="20dp"
+        android:layout_below="@id/media_controller"
+        android:layout_marginTop="150dp"
+        android:visibility="visible"
+        style="@style/tallerBarStyle"
+      />
 
 
 

@@ -38,6 +38,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     // la position de la track choisie dans la liste contenant toutes les tracks
     private int chosenTrackId;
     private View mMediaControllerView;
+    private TextView trackTimePositionView;
 
     private boolean isMediaPlayerPrepared = false;
 
@@ -49,7 +50,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
         setContentView(R.layout.activity_play_track);
         trackInfoView = (TextView) findViewById(R.id.playing_track_informations);
         mMediaControllerView = (View)findViewById(R.id.media_controller);
-
+        trackTimePositionView = (TextView) findViewById(R.id.track_time_position);
 
     }
 
@@ -60,6 +61,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
         player.release();
         player = null;
         super.onStop();
+
 
     }
 
@@ -241,14 +243,19 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        mp.reset();
+       if(mp!= null) {
+           mp.reset();
+       }
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+
         isMediaPlayerPrepared = false;
-        mp.reset();
-        mp.release();
+        if(mp!= null) {
+            mp.reset();
+            mp.release();
+        }
         return false;
     }
 
