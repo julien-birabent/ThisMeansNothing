@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         initializeViews();
         // toujours instancier un objet avant de pouvoir l'utiliser
         audioTracks = new ArrayList<AudioTrack>();

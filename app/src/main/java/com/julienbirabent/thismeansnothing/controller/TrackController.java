@@ -1,6 +1,8 @@
 package com.julienbirabent.thismeansnothing.controller;
 
+import android.app.Activity;
 import android.content.Context;
+import android.view.KeyEvent;
 import android.widget.MediaController;
 
 /**
@@ -16,8 +18,16 @@ public class TrackController extends MediaController {
 
     @Override
     public void hide() {
-        super.hide();
+
     }
 
+    // Pour pouvoir revenir en arrière quand le controller est entrain de jouer
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
 
+            if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                ((Activity) getContext()).finish();
+            }
+            return super.dispatchKeyEvent(event);
+        }
 }
