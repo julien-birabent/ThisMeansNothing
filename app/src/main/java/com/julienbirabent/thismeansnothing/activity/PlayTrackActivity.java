@@ -145,7 +145,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
         // on récupère la track via l'id fourni
         currentTrack = MainActivity.getTrackList().get(chosenTrackId);
         // On affiche la track en cours
-        trackInfoView.setText(currentTrack.getTitle() + ", " + currentTrack.getAuthor());
+        trackInfoView.setText(currentTrack.getTitle() + "\n " + currentTrack.getAuthor());
         // On joue le fichier audio
         playSong();
     }

@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.julienbirabent.thismeansnothing.R;
+import com.julienbirabent.thismeansnothing.RandomColorGenerator;
 import com.julienbirabent.thismeansnothing.model.AudioTrack;
 
 /**
@@ -53,12 +54,21 @@ public class AudioTrackAdapter extends BaseAdapter {
         //map to song layout
         LinearLayout trackLayout = (LinearLayout)audioTrackInflater.inflate
                 (R.layout.audio_track, parent, false);
+
         //get title and artist views
         TextView tittleView = (TextView)trackLayout.findViewById(R.id.track_title);
         TextView authorView = (TextView)trackLayout.findViewById(R.id.track_author);
         TextView durationView = (TextView) trackLayout.findViewById(R.id.track_duration);
         //get song using position
         AudioTrack currentTrack = audioTracks.get(position);
+
+        if(modeLicorne) {
+            trackLayout.setBackgroundColor(RandomColorGenerator.generate());
+            tittleView.setTextColor(RandomColorGenerator.generate());
+            authorView.setTextColor(RandomColorGenerator.generate());
+            durationView.setTextColor(RandomColorGenerator.generate());
+        }
+
         //get title and artist strings
         tittleView.setText(currentTrack.getTitle());
         authorView.setText(currentTrack.getAuthor());
