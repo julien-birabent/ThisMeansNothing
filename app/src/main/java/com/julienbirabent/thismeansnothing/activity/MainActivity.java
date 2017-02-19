@@ -31,12 +31,7 @@ public class MainActivity extends AppCompatActivity {
         audioTracks = new ArrayList<AudioTrack>();
 
         getAudioTracksFromExternalContent();
-
-        Collections.sort(audioTracks, new Comparator<AudioTrack>(){
-            public int compare(AudioTrack a, AudioTrack b){
-                return a.getTitle().compareTo(b.getTitle());
-            }
-        });
+        sortTracks();
 
     }
 
