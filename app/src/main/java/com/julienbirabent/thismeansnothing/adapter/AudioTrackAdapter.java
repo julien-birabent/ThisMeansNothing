@@ -23,6 +23,7 @@ public class AudioTrackAdapter extends BaseAdapter {
     private ArrayList<AudioTrack> audioTracks;
     private LayoutInflater audioTrackInflater;
     private Context context;
+    private boolean modeLicorne = false;
 
 
     public AudioTrackAdapter(Context context, ArrayList<AudioTrack> audioTracks){
@@ -66,5 +67,13 @@ public class AudioTrackAdapter extends BaseAdapter {
         trackLayout.setTag(position);
         return trackLayout;
 
+    }
+
+    public void setModeLicorne(boolean rainbow){
+        modeLicorne = rainbow;
+    }
+
+    public boolean getModeLicorne(){
+        return modeLicorne;
     }
 }
