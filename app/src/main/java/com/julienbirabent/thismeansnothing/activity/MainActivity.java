@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.julienbirabent.thismeansnothing.R;
@@ -25,8 +27,8 @@ import java.util.Comparator;
 public class MainActivity extends AppCompatActivity {
 
     // La liste contenant nos pistes audio
-    private ArrayList<AudioTrack> audioTracks;
-    private ListView audioTracksView;
+    private static ArrayList<AudioTrack> audioTracks;
+    private  ListView audioTracksView;
 
     private final static int EXTERNAL_STORAGE_CODE = 0;
 
@@ -41,13 +43,6 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
         // toujours instancier un objet avant de pouvoir l'utiliser
         audioTracks = new ArrayList<AudioTrack>();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
         getAudioTracksFromExternalContent();
         sortTracks();
         // En gros l'adapteur custom qu on a créé contient la liste des tracks que l on veut
@@ -56,7 +51,22 @@ public class MainActivity extends AppCompatActivity {
         AudioTrackAdapter audioTrackAdapter = new AudioTrackAdapter(this, audioTracks);
         audioTracksView.setAdapter(audioTrackAdapter);
 
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    // On a besoin de pouvoir récupérer cette liste dans d'autre context
+    public static ArrayList<AudioTrack>  getTrackList(){
+
+        if(audioTracks == null){
+            audioTracks = new ArrayList<AudioTrack>();
+        }
+
+        return audioTracks;
     }
 
     /**
@@ -141,6 +151,19 @@ public class MainActivity extends AppCompatActivity {
         // l'id audio_tracks_list (layout = ce qu on voit à l'écran)
         audioTracksView = (ListView) findViewById(R.id.audio_tracks_list);
 
+        // Quand on clique sur une track, on va lancer l'activité chargé d afficher le temps
+        // et de gérer la lecture de la track
+        audioTracksView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent i = new Intent(getApplicationContext(), PlayTrackActivity.class);
+                // On passe en extra le id correspondant à la place de la track passée en extra
+                // dans la liste de tracks
+                i.putExtra("chosenTrackId",(int) view.getTag());
+                startActivity(i);
+            }
+        });
 
     }
 
