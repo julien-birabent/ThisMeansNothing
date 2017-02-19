@@ -6,7 +6,6 @@
     android:background="#FF330000"
     tools:context=".activity.PlayTrackActivity">
 
-
     <TextView
         android:id="@+id/playing_track_informations"
         android:layout_width="fill_parent"
@@ -14,18 +13,33 @@
         android:textColor="#FFFFFF99"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:layout_marginTop="101dp"
+        android:textAlignment="center"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="100dp"
-        android:textAlignment="center"/>
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/track_time_position"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/playing_track_informations"
+        android:layout_marginTop="30dp"
+        android:textStyle="normal"
+        android:text="00:00:000"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="80sp"/>
+
     <MediaController
         android:id="@+id/media_controller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/playing_track_informations"
-        android:layout_marginTop="100dp">
+        android:layout_below="@id/track_time_position"
+        android:layout_marginTop="100dp"
+        android:nestedScrollingEnabled="false">
 
     </MediaController>
+
+
 
 
 </RelativeLayout>

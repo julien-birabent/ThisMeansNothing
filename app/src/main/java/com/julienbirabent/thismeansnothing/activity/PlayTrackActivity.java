@@ -39,6 +39,8 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     private int chosenTrackId;
     private View mMediaControllerView;
 
+    private boolean isMediaPlayerPrepared = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,48 +48,38 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
 
         setContentView(R.layout.activity_play_track);
         trackInfoView = (TextView) findViewById(R.id.playing_track_informations);
-
         mMediaControllerView = (View)findViewById(R.id.media_controller);
 
-        initMusicPlayer();
 
     }
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(PlayTrackActivity.this, MainActivity.class);
-        startActivity(intent);
-
-        finish();
-    }
-
 
     @Override
     protected void onStop() {
-        super.onStop();
+        isMediaPlayerPrepared = false;
         player.reset();
         player.release();
+        player = null;
+        super.onStop();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
+        initMusicPlayer();
         //setController();
-
         Bundle extras = getIntent().getExtras();
         // On récupère l'id de la track choisie.
         if (extras != null) {
             chosenTrackId = extras.getInt("chosenTrackId");
             actualiserCeQuiJoue();
-
         }
-
 
     }
 
@@ -122,12 +114,15 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
 
     private void setController() {
         //set the controller up
+
+        isMediaPlayerPrepared = false;
+
         controller = new TrackController(this);
 
         controller.setMediaPlayer(this);
         controller.setAnchorView(mMediaControllerView);
         controller.setEnabled(true);
-        controller.show(0);
+
 
         controller.setPrevNextListeners(new View.OnClickListener() {
             @Override
@@ -170,36 +165,53 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
 
     @Override
     public void start() {
-        if(!isPlaying()) {
+        if(!isPlaying() && player != null) {
             player.start();
         }
     }
 
     @Override
     public void pause() {
-        if(player.isPlaying()) {
+        if(player.isPlaying() && player != null) {
             player.pause();
         }
     }
 
     @Override
     public int getDuration() {
-        return player.getDuration();
+
+        if(isMediaPlayerPrepared && player != null){
+            player.getCurrentPosition();
+            return player.getDuration();
+        }
+        return 0 ;
     }
 
     @Override
     public int getCurrentPosition() {
-        return 0;// player.getCurrentPosition();
+
+        if(isMediaPlayerPrepared && player != null){
+            player.getCurrentPosition();
+        }
+
+        return 0;
     }
 
     @Override
     public void seekTo(int pos) {
-        player.seekTo(pos);
+        if(player != null){
+            player.seekTo(pos);
+        }
     }
 
     @Override
     public boolean isPlaying() {
-        return player.isPlaying();
+
+        if(player != null){
+            return player.isPlaying();
+        }
+
+        return false;
     }
 
     @Override
@@ -234,7 +246,7 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-
+        isMediaPlayerPrepared = false;
         mp.reset();
         mp.release();
         return false;
@@ -245,6 +257,8 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
         //start playback
         setController();
         mp.start();
+        isMediaPlayerPrepared = true;
+        controller.show(0);
     }
 
     public void playSong(){

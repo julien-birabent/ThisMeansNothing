@@ -5,6 +5,8 @@ import android.content.Context;
 import android.view.KeyEvent;
 import android.widget.MediaController;
 
+import com.julienbirabent.thismeansnothing.activity.PlayTrackActivity;
+
 /**
  * Created by Julien on 2017-02-18.
  */
@@ -27,6 +29,7 @@ public class TrackController extends MediaController {
 
             if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
                 ((Activity) getContext()).finish();
+
             }
             return super.dispatchKeyEvent(event);
         }
