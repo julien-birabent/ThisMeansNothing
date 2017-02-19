@@ -53,18 +53,6 @@ public class PlayTrackActivity extends Activity implements MediaController.Media
     protected void onResume() {
         super.onResume();
 
-     /*   setController();
-
-        Bundle extras = getIntent().getExtras();
-        // On récupère l'id de la track choisie.
-        if (extras != null) {
-            int choseTrackId = extras.getInt("chosenTrackId");
-            // Et enfin on récupère la track via l'id fourni
-            currentTrack = MainActivity.getTrackList().get(choseTrackId);
-            trackInfoView = (TextView) findViewById(R.id.playing_track_info);
-            trackInfoView.setText(currentTrack.getTitle() + ", " + currentTrack.getAuthor());
-        }
-        */
     }
 
     @Override

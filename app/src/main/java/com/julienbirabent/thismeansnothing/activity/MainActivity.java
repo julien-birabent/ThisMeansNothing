@@ -37,20 +37,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Il nous faut les permissions avant sinon ca crash
-        requestPermissions();
 
         initializeViews();
         // toujours instancier un objet avant de pouvoir l'utiliser
         audioTracks = new ArrayList<AudioTrack>();
-        getAudioTracksFromExternalContent();
-        sortTracks();
-        // En gros l'adapteur custom qu on a créé contient la liste des tracks que l on veut
-        // afficher. C est cet objet qui va se charger d aller mettre les informations des tracks
-        // dans la liste qui s affiche à l'écran.
-        AudioTrackAdapter audioTrackAdapter = new AudioTrackAdapter(this, audioTracks);
-        audioTracksView.setAdapter(audioTrackAdapter);
-
+        // Il nous faut les permissions avant sinon ca crash
+        requestPermissions();
     }
 
     @Override
@@ -84,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         EXTERNAL_STORAGE_CODE);
 
+        }else{
+            // all greavy baby on peut initialiser nos SHIT
+            getAudioTracksFromExternalContent();
+            sortTracks();
+            // En gros l'adapteur custom qu on a créé contient la liste des tracks que l on veut
+            // afficher. C est cet objet qui va se charger d aller mettre les informations des tracks
+            // dans la liste qui s affiche à l'écran.
+            AudioTrackAdapter audioTrackAdapter = new AudioTrackAdapter(this, audioTracks);
+            audioTracksView.setAdapter(audioTrackAdapter);
         }
 
     }
